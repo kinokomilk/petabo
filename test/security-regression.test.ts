@@ -1,6 +1,5 @@
-// code-reviewer 指摘に対する修正の回帰テスト。
-// 1) メンバー削除でセッション破棄 2) assignee 検証 3) tag 409 事前チェック
-// 4) login レート制限。
+// セキュリティと入力検証まわりの回帰テスト。
+// 認可境界・担当者検証・タグ重複・入力長・DB制約・ログイン試行制限を守る。
 import { describe, expect, it } from "vitest";
 import { env } from "cloudflare:test";
 import { call, seedHousehold, seedMember, seedTag } from "./helpers";
@@ -11,7 +10,7 @@ import {
   RATE_LIMIT_MAX_ATTEMPTS,
 } from "../src/db/loginAttempts";
 
-describe("1) メンバー削除時にセッション破棄", () => {
+describe("メンバー削除時のセッション破棄", () => {
   it("削除されたメンバーの既存セッションは即座に無効化される（401）", async () => {
     const { ownerSession, householdId } = await seedHousehold("session破棄家");
     const target = await seedMember(householdId, "破棄対象");
@@ -40,7 +39,7 @@ describe("1) メンバー削除時にセッション破棄", () => {
   });
 });
 
-describe("2) assignee_id の存在・所属検証", () => {
+describe("assignee_id の存在・所属検証", () => {
   it("同 household の active メンバーは担当に設定できる", async () => {
     const { ownerSession, householdId } = await seedHousehold("担当検証家");
     const member = await seedMember(householdId, "正当な担当者");
@@ -127,7 +126,7 @@ describe("2) assignee_id の存在・所属検証", () => {
   });
 });
 
-describe("3) tag 作成の 409 事前チェック", () => {
+describe("タグ作成の 409 事前チェック", () => {
   it("同名タグ作成は事前チェックで 409", async () => {
     const { ownerSession, householdId } = await seedHousehold("tag409家");
     await seedTag(householdId, "既存タグ");
@@ -170,7 +169,7 @@ describe("3) tag 作成の 409 事前チェック", () => {
   });
 });
 
-describe("5) auth 入力長制限", () => {
+describe("auth 入力長制限", () => {
   it("register は長すぎる名前・パスワードを 400 にする", async () => {
     const longName = "あ".repeat(81);
     const longPassword = "p".repeat(129);
@@ -205,7 +204,7 @@ describe("5) auth 入力長制限", () => {
   });
 });
 
-describe("6) DB trigger によるデータ制約", () => {
+describe("DB trigger によるデータ制約", () => {
   it("enum / boolean / color の不正値を DB 側でも拒否する", async () => {
     const { householdId, ownerId } = await seedHousehold("制約家");
     const db = env.DB;
@@ -248,7 +247,7 @@ describe("6) DB trigger によるデータ制約", () => {
 // 作り替えない。ルートの 429 経路は「既存の最古 household の key を上限まで
 // 事前 seed して login が 429 を返す」ことで確認し、カウント/リセットの中身は
 // loginAttempts ヘルパーの単体テストで検証する。
-describe("4) login の軽量レート制限", () => {
+describe("login の軽量レート制限", () => {
   it("ヘルパー：上限超過で isRateLimited=true、成功(reset)で false に戻る", async () => {
     const db = env.DB;
     const key = `rl_unit_${crypto.randomUUID()}`;

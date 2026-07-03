@@ -47,6 +47,28 @@ export class LineApiError extends Error {
   }
 }
 
+async function fetchLine(
+  endpoint: string,
+  init: RequestInit,
+  unreachableMessage: string,
+): Promise<Response> {
+  try {
+    return await fetch(endpoint, init);
+  } catch {
+    throw new LineApiError(unreachableMessage, 502);
+  }
+}
+
+function assertOk(res: Response, errorMessage: string): void {
+  if (!res.ok) {
+    throw new LineApiError(errorMessage, res.status);
+  }
+}
+
+async function readJsonOrNull<T>(res: Response): Promise<T | null> {
+  return (await res.json().catch(() => null)) as T | null;
+}
+
 // push 失敗の分類。無料枠浪費・無駄な再送を避けるため、
 //   - permanent（400/403 等）: 無効 userId・ブロック等。再試行しても無駄 → 再送しない。
 //   - transient（429/5xx・ネットワーク不達）: 一過性 → 未記録のまま次回 Cron で再試行。
@@ -76,22 +98,18 @@ export async function exchangeCodeForToken(params: {
     client_secret: params.channelSecret,
   });
 
-  let res: Response;
-  try {
-    res = await fetch(LINE_TOKEN_ENDPOINT, {
+  const res = await fetchLine(
+    LINE_TOKEN_ENDPOINT,
+    {
       method: "POST",
       headers: { "content-type": "application/x-www-form-urlencoded" },
       body: form.toString(),
-    });
-  } catch {
-    throw new LineApiError("token endpoint unreachable", 502);
-  }
+    },
+    "token endpoint unreachable",
+  );
+  assertOk(res, "token endpoint error");
 
-  if (!res.ok) {
-    throw new LineApiError("token endpoint error", res.status);
-  }
-
-  const data = (await res.json().catch(() => null)) as LineTokenResponse | null;
+  const data = await readJsonOrNull<LineTokenResponse>(res);
   if (
     !data ||
     typeof data.id_token !== "string" ||
@@ -117,23 +135,22 @@ export async function verifyIdToken(params: {
   });
   if (params.nonce) form.set("nonce", params.nonce);
 
-  let res: Response;
-  try {
-    res = await fetch(LINE_VERIFY_ENDPOINT, {
+  const res = await fetchLine(
+    LINE_VERIFY_ENDPOINT,
+    {
       method: "POST",
       headers: { "content-type": "application/x-www-form-urlencoded" },
       body: form.toString(),
-    });
-  } catch {
-    throw new LineApiError("verify endpoint unreachable", 502);
-  }
+    },
+    "verify endpoint unreachable",
+  );
 
   if (!res.ok) {
     // 400 = 署名/nonce/aud 不正など。呼び出し側で 401 に寄せる。
     throw new LineApiError("verify endpoint rejected id_token", res.status);
   }
 
-  const data = (await res.json().catch(() => null)) as LineIdTokenPayload | null;
+  const data = await readJsonOrNull<LineIdTokenPayload>(res);
   if (!data || typeof data.sub !== "string") {
     throw new LineApiError("verify endpoint returned invalid payload", 502);
   }
@@ -144,21 +161,17 @@ export async function verifyIdToken(params: {
 // bot_prompt だけでは「既に友だち」「追加しなかった」をDBへ確定反映できないため、
 // callback 後にこの API の friendFlag を line_followed へ同期する。
 export async function getFriendshipStatus(accessToken: string): Promise<boolean> {
-  let res: Response;
-  try {
-    res = await fetch(LINE_FRIENDSHIP_ENDPOINT, {
+  const res = await fetchLine(
+    LINE_FRIENDSHIP_ENDPOINT,
+    {
       method: "GET",
       headers: { authorization: `Bearer ${accessToken}` },
-    });
-  } catch {
-    throw new LineApiError("friendship endpoint unreachable", 502);
-  }
+    },
+    "friendship endpoint unreachable",
+  );
+  assertOk(res, "friendship endpoint error");
 
-  if (!res.ok) {
-    throw new LineApiError("friendship endpoint error", res.status);
-  }
-
-  const data = (await res.json().catch(() => null)) as { friendFlag?: unknown } | null;
+  const data = await readJsonOrNull<{ friendFlag?: unknown }>(res);
   if (!data || typeof data.friendFlag !== "boolean") {
     throw new LineApiError("friendship endpoint returned invalid payload", 502);
   }
@@ -235,22 +248,18 @@ export function createLinePush(channelAccessToken: string): LinePush {
   };
 
   async function send(endpoint: string, payload: unknown): Promise<void> {
-    let res: Response;
-    try {
-      res = await fetch(endpoint, {
+    const res = await fetchLine(
+      endpoint,
+      {
         method: "POST",
         headers,
         body: JSON.stringify(payload),
-      });
-    } catch {
-      // ネットワーク不達は 5xx 相当（次回再試行に倒す）。
-      throw new LineApiError("push endpoint unreachable", 502);
-    }
-    if (!res.ok) {
-      // 本文は秘密やユーザ情報を含みうるためメッセージに展開しない。
-      // status のみ呼び出し側へ渡す（403=ブロック / 429=レート / 5xx=一時障害）。
-      throw new LineApiError("push endpoint error", res.status);
-    }
+      },
+      "push endpoint unreachable",
+    );
+    // 本文は秘密やユーザ情報を含みうるためメッセージに展開しない。
+    // status のみ呼び出し側へ渡す（403=ブロック / 429=レート / 5xx=一時障害）。
+    assertOk(res, "push endpoint error");
   }
 
   return {
@@ -279,20 +288,17 @@ export function createLineReply(channelAccessToken: string): LineReply {
   };
   return {
     async reply(replyToken, messages) {
-      let res: Response;
-      try {
-        res = await fetch(LINE_REPLY_ENDPOINT, {
+      const res = await fetchLine(
+        LINE_REPLY_ENDPOINT,
+        {
           method: "POST",
           headers,
           body: JSON.stringify({ replyToken, messages }),
-        });
-      } catch {
-        throw new LineApiError("reply endpoint unreachable", 502);
-      }
-      if (!res.ok) {
-        // 本文は秘密やユーザ情報を含みうるためメッセージに展開しない。
-        throw new LineApiError("reply endpoint error", res.status);
-      }
+        },
+        "reply endpoint unreachable",
+      );
+      // 本文は秘密やユーザ情報を含みうるためメッセージに展開しない。
+      assertOk(res, "reply endpoint error");
     },
   };
 }
@@ -351,22 +357,17 @@ export function createLineRichMenuApi(
 
   return {
     async createRichMenu(def) {
-      let res: Response;
-      try {
-        res = await fetch(LINE_RICHMENU_ENDPOINT, {
+      const res = await fetchLine(
+        LINE_RICHMENU_ENDPOINT,
+        {
           method: "POST",
           headers: { ...authHeader, "content-type": "application/json" },
           body: JSON.stringify(def),
-        });
-      } catch {
-        throw new LineApiError("richmenu create unreachable", 502);
-      }
-      if (!res.ok) {
-        throw new LineApiError("richmenu create error", res.status);
-      }
-      const data = (await res.json().catch(() => null)) as {
-        richMenuId?: unknown;
-      } | null;
+        },
+        "richmenu create unreachable",
+      );
+      assertOk(res, "richmenu create error");
+      const data = await readJsonOrNull<{ richMenuId?: unknown }>(res);
       if (!data || typeof data.richMenuId !== "string" || !data.richMenuId) {
         throw new LineApiError("richmenu create returned invalid id", 502);
       }
@@ -374,57 +375,40 @@ export function createLineRichMenuApi(
     },
 
     async uploadRichMenuImage(richMenuId, image, contentType) {
-      let res: Response;
-      try {
-        res = await fetch(
-          `${LINE_RICHMENU_DATA_ENDPOINT}/${encodeURIComponent(richMenuId)}/content`,
-          {
-            method: "POST",
-            headers: { ...authHeader, "content-type": contentType },
-            body: image,
-          },
-        );
-      } catch {
-        throw new LineApiError("richmenu image unreachable", 502);
-      }
-      if (!res.ok) {
-        throw new LineApiError("richmenu image error", res.status);
-      }
+      const res = await fetchLine(
+        `${LINE_RICHMENU_DATA_ENDPOINT}/${encodeURIComponent(richMenuId)}/content`,
+        {
+          method: "POST",
+          headers: { ...authHeader, "content-type": contentType },
+          body: image,
+        },
+        "richmenu image unreachable",
+      );
+      assertOk(res, "richmenu image error");
     },
 
     async setDefaultRichMenu(richMenuId) {
-      let res: Response;
-      try {
-        res = await fetch(
-          `${LINE_DEFAULT_RICHMENU_ENDPOINT}/${encodeURIComponent(richMenuId)}`,
-          { method: "POST", headers: authHeader },
-        );
-      } catch {
-        throw new LineApiError("richmenu default unreachable", 502);
-      }
-      if (!res.ok) {
-        throw new LineApiError("richmenu default error", res.status);
-      }
+      const res = await fetchLine(
+        `${LINE_DEFAULT_RICHMENU_ENDPOINT}/${encodeURIComponent(richMenuId)}`,
+        { method: "POST", headers: authHeader },
+        "richmenu default unreachable",
+      );
+      assertOk(res, "richmenu default error");
     },
 
     async getDefaultRichMenuId() {
-      let res: Response;
-      try {
-        res = await fetch(LINE_DEFAULT_RICHMENU_ENDPOINT, {
+      const res = await fetchLine(
+        LINE_DEFAULT_RICHMENU_ENDPOINT,
+        {
           method: "GET",
           headers: authHeader,
-        });
-      } catch {
-        throw new LineApiError("richmenu default get unreachable", 502);
-      }
+        },
+        "richmenu default get unreachable",
+      );
       // 404 = デフォルト未設定（正常系として null を返す）。
       if (res.status === 404) return null;
-      if (!res.ok) {
-        throw new LineApiError("richmenu default get error", res.status);
-      }
-      const data = (await res.json().catch(() => null)) as {
-        richMenuId?: unknown;
-      } | null;
+      assertOk(res, "richmenu default get error");
+      const data = await readJsonOrNull<{ richMenuId?: unknown }>(res);
       if (!data || typeof data.richMenuId !== "string" || !data.richMenuId) {
         return null;
       }
@@ -432,20 +416,14 @@ export function createLineRichMenuApi(
     },
 
     async deleteRichMenu(richMenuId) {
-      let res: Response;
-      try {
-        res = await fetch(
-          `${LINE_RICHMENU_ENDPOINT}/${encodeURIComponent(richMenuId)}`,
-          { method: "DELETE", headers: authHeader },
-        );
-      } catch {
-        throw new LineApiError("richmenu delete unreachable", 502);
-      }
+      const res = await fetchLine(
+        `${LINE_RICHMENU_ENDPOINT}/${encodeURIComponent(richMenuId)}`,
+        { method: "DELETE", headers: authHeader },
+        "richmenu delete unreachable",
+      );
       // 404 = 既に無い（冪等に成功扱い）。
       if (res.status === 404) return;
-      if (!res.ok) {
-        throw new LineApiError("richmenu delete error", res.status);
-      }
+      assertOk(res, "richmenu delete error");
     },
   };
 }

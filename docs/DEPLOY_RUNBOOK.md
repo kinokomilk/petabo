@@ -1,4 +1,4 @@
-# Deploy Runbook
+# デプロイ手順
 
 petabo のデプロイ・検証・切り戻し手順。秘密情報の値はこのファイルに書かない。
 
@@ -19,7 +19,7 @@ E2E も必要に応じて実行する。
 npm run e2e
 ```
 
-## 2. Secrets
+## 2. シークレット
 
 本番に入れる。
 
@@ -37,7 +37,7 @@ Phase 3 で追加。
 npx wrangler secret put LIFF_ID
 ```
 
-## 3. Migration
+## 3. マイグレーション
 
 ローカル。
 
@@ -53,7 +53,7 @@ npm run migrate:remote
 
 `0004_data_constraints.sql` は既存データを作り直さず、以後の不正値を trigger で拒否する。Phase 2 では `0005_line.sql` まで適用し、LINE 連携列・OAuth state・reminder 重複防止テーブルを作る。
 
-## 4. Deploy
+## 4. デプロイ
 
 ```bash
 npm run deploy
@@ -65,7 +65,7 @@ npm run deploy
 curl -i https://<worker-domain>/api/health
 ```
 
-## 5. LINE Console
+## 5. LINE コンソール
 
 - Messaging API Webhook URL: `https://<worker-domain>/api/line/webhook`
 - Webhook を ON
@@ -74,7 +74,7 @@ curl -i https://<worker-domain>/api/health
 
 Webhook Verify は Phase 2 実装後に実行する。
 
-## 6. Smoke Test
+## 6. スモークテスト
 
 - ブラウザでトップを開く。
 - 既存フォールバックログインが動く。
@@ -87,7 +87,7 @@ Webhook Verify は Phase 2 実装後に実行する。
 
 LINE 実環境は LINE Developers Console の Webhook Verify と実機ログインで確認する。
 
-## 7. Logs
+## 7. ログ
 
 ```bash
 npx wrangler tail
@@ -101,7 +101,7 @@ npx wrangler tail
 - LINE Login 後に friendship status API が失敗していないか。
 - secrets の値や token をログに出していないか。
 
-## 8. Rollback
+## 8. 切り戻し
 
 コードだけ戻す場合。
 

@@ -1,32 +1,32 @@
-# Architecture
+# アーキテクチャ
 
-petabo uses a single Cloudflare Worker as the backend and static asset host.
+petabo は、単一の Cloudflare Worker を API サーバー兼 静的アセット配信元として使います。
 
 ```mermaid
 flowchart LR
-  Web["Web / PWA"] --> Worker["Cloudflare Worker\nHono API + static assets"]
-  Line["LINE app"] --> Worker
+  Web["Web / PWA"] --> Worker["Cloudflare Worker\nHono API + 静的アセット"]
+  Line["LINE アプリ"] --> Worker
   Worker --> D1["Cloudflare D1"]
   Worker --> LinePlatform["LINE Platform\nLogin / Messaging API / LIFF"]
   Cron["Cron Trigger"] --> Worker
 ```
 
-## Why This Shape
+## この構成にした理由
 
-- The app is small and family-oriented, so operational cost and maintenance effort should stay low.
-- Cloudflare Workers can serve both the API and built frontend assets in one deployment.
-- D1 is enough for relational data such as users, households, memberships, todos, checklist items, comments, tags, sessions, and reminder history.
-- Cron Triggers can run due-date reminder checks without another scheduler.
-- LINE handles the notification surface and lightweight chat operations, while the PWA handles richer editing.
+- 家族向けの小さなアプリなので、運用コストとメンテナンス負荷を低くしたい。
+- Cloudflare Workers なら API とビルド済みフロントエンドを 1 デプロイにまとめられる。
+- D1 は users、households、memberships、todos、checklist items、comments、tags、sessions、reminder history のような関係データに向いている。
+- Cron Triggers で期限リマインダーを別のジョブ基盤なしで動かせる。
+- LINE は通知と軽い操作の入口、PWA は詳細編集の入口として役割分担できる。
 
-## Runtime Boundaries
+## 境界
 
-- The browser and LIFF frontend only call the app API.
-- LINE secrets stay on the Worker side.
-- LINE webhook requests are verified from the raw body before JSON parsing.
-- Session state is stored in D1 and attached through HttpOnly cookies.
-- Private tasks are filtered by creator on the server side, not only in the UI.
+- ブラウザ / LIFF フロントエンドは petabo API だけを呼ぶ。
+- LINE の secret や access token は Worker 側に閉じる。
+- LINE webhook は raw body で署名検証してから JSON parse する。
+- セッションは D1 に保存し、HttpOnly Cookie で扱う。
+- 非公開タスクは UI だけでなく、サーバー側で作成者によりフィルタする。
 
-## Deployment
+## デプロイ
 
-The frontend is built into `web/dist` and served through the Worker assets binding. The same Worker also exposes REST routes and scheduled reminder logic.
+フロントエンドは `web/dist` にビルドし、Worker の assets binding で配信します。同じ Worker が REST API と scheduled reminder も担当します。

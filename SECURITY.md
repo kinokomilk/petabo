@@ -1,14 +1,14 @@
-# Security Policy
+# セキュリティポリシー
 
-petabo is published as a reference implementation for a personal project.
+petabo は個人開発アプリの参考実装として公開しています。
 
-## Reporting
+## 報告
 
-Please do not open a public issue for vulnerabilities that could expose secrets, user data, or authentication bypasses. Report them privately to the repository owner.
+秘密情報、ユーザーデータ、認証回避につながる可能性がある脆弱性は、公開 Issue ではなくリポジトリオーナーへ非公開で報告してください。
 
-## Secrets
+## 秘密情報
 
-Do not commit real values for:
+次の実値はコミットしないでください。
 
 - `LINE_CHANNEL_SECRET`
 - `LINE_CHANNEL_ACCESS_TOKEN`
@@ -17,8 +17,8 @@ Do not commit real values for:
 - `APP_BASE_URL`
 - `LIFF_ID`
 
-Use `.dev.vars` locally and Workers Secrets in production. `.dev.vars.example` is safe to commit because it contains no real values.
+ローカルでは `.dev.vars`、本番では Workers Secrets を使います。`.dev.vars.example` には実値を含めないため、コミットして問題ありません。
 
-## Production Use
+## 本番利用について
 
-This repository is not a hardened SaaS template. Review authentication, authorization, data retention, logging, rate limits, and backup requirements before adapting it for real users.
+このリポジトリは堅牢な SaaS テンプレートではありません。実運用に流用する場合は、認証、認可、データ保持、ログ、レート制限、バックアップなどを改めて確認してください。

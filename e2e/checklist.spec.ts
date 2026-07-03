@@ -14,10 +14,26 @@ test("チェックリストを作成し、項目をEnterで追加してチェッ
   const itemInput = page.getByLabel("品目を追加");
   // 各項目が追加されたのを確認してから次を足す（実ユーザーの操作に合わせる）。
   await itemInput.fill("牛乳");
-  await itemInput.press("Enter");
+  await Promise.all([
+    page.waitForResponse(
+      (res) =>
+        res.request().method() === "POST" &&
+        /\/api\/todos\/[^/]+\/items$/.test(new URL(res.url()).pathname) &&
+        res.status() === 201
+    ),
+    itemInput.press("Enter"),
+  ]);
   await expect(page.getByText("牛乳")).toBeVisible();
   await itemInput.fill("卵");
-  await itemInput.press("Enter");
+  await Promise.all([
+    page.waitForResponse(
+      (res) =>
+        res.request().method() === "POST" &&
+        /\/api\/todos\/[^/]+\/items$/.test(new URL(res.url()).pathname) &&
+        res.status() === 201
+    ),
+    itemInput.press("Enter"),
+  ]);
   await expect(page.getByText("卵")).toBeVisible();
 
   await expect(page.getByText("0 / 2")).toBeVisible();

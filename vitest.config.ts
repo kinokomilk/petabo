@@ -29,6 +29,8 @@ export default defineConfig(async () => {
     ],
     test: {
       setupFiles: ["./test/apply-migrations.ts"],
+      // Cloudflare singleWorker と global fetch mock を共有するため、ファイル並列は避ける。
+      fileParallelism: false,
       // Playwright の E2E（e2e/*.spec.ts）は vitest 対象外。
       exclude: [...configDefaults.exclude, "e2e/**"],
     },

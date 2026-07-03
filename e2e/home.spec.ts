@@ -121,6 +121,17 @@ test("ホームでチェックリスト項目を表示して完了できる", as
 
 test("追加・公開範囲・一覧フィルターが用途ごとに整理されている", async ({ page }) => {
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator(".qa-controls")).toBeVisible();
+  await expect
+    .poll(async () => {
+      const quickAdd = await page.locator(".quick-add").boundingBox();
+      const attributes = await page.locator(".qa-controls").boundingBox();
+      if (!quickAdd || !attributes) return false;
+      return attributes.y + attributes.height <= quickAdd.y + quickAdd.height + 1;
+    })
+    .toBe(true);
+
   const quickAdd = await page.locator(".quick-add").boundingBox();
   const filters = await page.locator(".home-filters").boundingBox();
   const list = await page.locator(".home-list").boundingBox();

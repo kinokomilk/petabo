@@ -9,8 +9,6 @@ import type {
   UpdateItemBody,
   CreateCommentBody,
   TodoRow,
-  TodoStatus,
-  Visibility,
 } from "../types";
 import { requireAuth, authCtx } from "../auth/middleware";
 import {
@@ -36,37 +34,19 @@ import {
 } from "../db/items";
 import { listComments, addComment } from "../db/comments";
 import { listActiveMembers } from "../db/households";
+import {
+  assigneeForCreate,
+  assigneeForUpdate,
+  cleanItemTexts,
+  validateCreateTodoBody,
+  validateStatusQuery,
+  validateUpdateTodoBody,
+} from "./todoInput";
 
 export const todoRoutes = new Hono<HonoEnv>();
 
-const STATUSES: TodoStatus[] = ["todo", "doing", "done"];
-const VISIBILITIES: Visibility[] = ["shared", "private"];
-const MAX_TITLE_LENGTH = 120;
-const MAX_DESCRIPTION_LENGTH = 2000;
 const MAX_COMMENT_LENGTH = 1000;
 const MAX_ITEM_TEXT_LENGTH = 300;
-
-function isValidDueDate(v: unknown): v is string | null {
-  if (v === null) return true;
-  if (typeof v !== "string") return false;
-  const ms = Date.parse(v);
-  return Number.isFinite(ms) && new Date(ms).toISOString() === v;
-}
-
-function cleanItemTexts(body: CreateItemsBody | null): string[] {
-  const texts: string[] = [];
-  if (body) {
-    if (Array.isArray(body.texts)) {
-      for (const text of body.texts) {
-        if (typeof text !== "string") continue;
-        texts.push(text);
-      }
-    }
-    // text に改行を含む一括登録もサポート。
-    if (typeof body.text === "string") texts.push(...body.text.split("\n"));
-  }
-  return texts.map((t) => t.trim()).filter((t) => t.length > 0);
-}
 
 // private 隔離の中核：household 内かつ、shared か自分の private のみ可視。
 // 見えない場合は 404（存在を隠す）。
@@ -97,12 +77,9 @@ todoRoutes.get("/todos", requireAuth, async (c) => {
   const { household, user } = authCtx(c);
   const statusParam = c.req.query("status");
   const filter: TodoFilter = {};
-  if (statusParam) {
-    if (!STATUSES.includes(statusParam as TodoStatus)) {
-      return c.json({ error: "status が不正です" }, 400);
-    }
-    filter.status = statusParam as TodoStatus;
-  }
+  const status = validateStatusQuery(statusParam);
+  if (!status.ok) return c.json({ error: status.error }, 400);
+  if (status.value) filter.status = status.value;
   const assignee = c.req.query("assignee");
   if (assignee) filter.assigneeId = assignee;
   const tag = c.req.query("tag");
@@ -117,47 +94,13 @@ todoRoutes.get("/todos", requireAuth, async (c) => {
 todoRoutes.post("/todos", requireAuth, async (c) => {
   const { household, user } = authCtx(c);
   const body = (await c.req.json().catch(() => null)) as CreateTodoBody | null;
-  if (!body || typeof body.title !== "string" || !body.title.trim()) {
-    return c.json({ error: "title は必須です" }, 400);
-  }
-  if (body.title.trim().length > MAX_TITLE_LENGTH) {
-    return c.json({ error: "title が長すぎます" }, 400);
-  }
-  if (
-    body.description !== undefined &&
-    (typeof body.description !== "string" ||
-      body.description.length > MAX_DESCRIPTION_LENGTH)
-  ) {
-    return c.json({ error: "description が不正です" }, 400);
-  }
-  if (body.status !== undefined && !STATUSES.includes(body.status)) {
-    return c.json({ error: "status が不正です" }, 400);
-  }
-  if (body.visibility !== undefined && !VISIBILITIES.includes(body.visibility)) {
-    return c.json({ error: "visibility が不正です" }, 400);
-  }
-  if (body.dueDate !== undefined && !isValidDueDate(body.dueDate)) {
-    return c.json({ error: "dueDate が不正です" }, 400);
-  }
-  const initialItems = Array.isArray(body.items)
-    ? body.items
-        .filter((t): t is string => typeof t === "string")
-        .map((t) => t.trim())
-        .filter((t) => t.length > 0)
-    : [];
-  if (initialItems.some((t) => t.length > MAX_ITEM_TEXT_LENGTH)) {
-    return c.json({ error: "チェックリスト項目が長すぎます" }, 400);
-  }
-
-  const status = body.status ?? "todo";
-  const visibility = body.visibility ?? "shared";
+  const valid = validateCreateTodoBody(body);
+  if (!valid.ok) return c.json({ error: valid.error }, 400);
+  const input = valid.value;
 
   // 未指定なら作成者を担当にする。null は明示的な未担当として扱う。
   // private は自分専用：他人を担当に設定しない。
-  let assigneeId = body.assigneeId === undefined ? user.id : body.assigneeId;
-  if (visibility === "private" && assigneeId && assigneeId !== user.id) {
-    assigneeId = null;
-  }
+  const assigneeId = assigneeForCreate(input.raw, input.visibility, user.id);
   // 担当者が指定された場合、同 household の active メンバーであることを検証。
   if (assigneeId && !(await isActiveMember(c.env.DB, household.id, assigneeId))) {
     return c.json({ error: "不正な担当者です" }, 400);
@@ -166,21 +109,21 @@ todoRoutes.post("/todos", requireAuth, async (c) => {
   const row = await createTodo(c.env.DB, {
     householdId: household.id,
     creatorId: user.id,
-    title: body.title.trim(),
-    description: typeof body.description === "string" ? body.description : "",
-    status,
-    isChecklist: body.isChecklist === true,
-    isImportant: body.isImportant === true,
-    visibility,
-    dueDate: body.dueDate ?? null,
+    title: input.title,
+    description: input.description,
+    status: input.status,
+    isChecklist: input.isChecklist,
+    isImportant: input.isImportant,
+    visibility: input.visibility,
+    dueDate: input.dueDate,
     assigneeId,
   });
 
-  if (Array.isArray(body.tagIds) && body.tagIds.length > 0) {
-    await setTodoTags(c.env.DB, household.id, row.id, body.tagIds);
+  if (Array.isArray(input.tagIds) && input.tagIds.length > 0) {
+    await setTodoTags(c.env.DB, household.id, row.id, input.tagIds);
   }
-  if (initialItems.length > 0) {
-    await addItems(c.env.DB, row.id, initialItems);
+  if (input.initialItems.length > 0) {
+    await addItems(c.env.DB, row.id, input.initialItems);
   }
 
   const fresh = (await getTodoRow(c.env.DB, household.id, row.id))!;
@@ -203,47 +146,16 @@ todoRoutes.patch("/todos/:id", requireAuth, async (c) => {
   if (!row) return c.json({ error: "not_found" }, 404);
 
   const body = (await c.req.json().catch(() => null)) as UpdateTodoBody | null;
-  if (!body) return c.json({ error: "invalid body" }, 400);
+  const valid = validateUpdateTodoBody(body);
+  if (!valid.ok) return c.json({ error: valid.error }, 400);
+  const input = valid.value;
 
-  if (body.status !== undefined && !STATUSES.includes(body.status)) {
-    return c.json({ error: "status が不正です" }, 400);
-  }
-  if (body.visibility !== undefined && !VISIBILITIES.includes(body.visibility)) {
-    return c.json({ error: "visibility が不正です" }, 400);
-  }
-  if (body.visibility !== undefined && row.creator_id !== user.id) {
+  if (input.visibility !== undefined && row.creator_id !== user.id) {
     return c.json({ error: "公開範囲の変更は作成者のみ可能です" }, 403);
-  }
-  if (
-    body.title !== undefined &&
-    (typeof body.title !== "string" ||
-      !body.title.trim() ||
-      body.title.trim().length > MAX_TITLE_LENGTH)
-  ) {
-    return c.json({ error: "title が不正です" }, 400);
-  }
-  if (
-    body.description !== undefined &&
-    (typeof body.description !== "string" ||
-      body.description.length > MAX_DESCRIPTION_LENGTH)
-  ) {
-    return c.json({ error: "description が不正です" }, 400);
-  }
-  if (body.dueDate !== undefined && !isValidDueDate(body.dueDate)) {
-    return c.json({ error: "dueDate が不正です" }, 400);
   }
 
   // 結果として private になる場合、他人担当は剥がす（自分専用）。
-  const nextVisibility = body.visibility ?? row.visibility;
-  let assigneeId = body.assigneeId;
-  if (
-    nextVisibility === "private" &&
-    assigneeId !== undefined &&
-    assigneeId &&
-    assigneeId !== user.id
-  ) {
-    assigneeId = null;
-  }
+  const assigneeId = assigneeForUpdate(input, row, user.id);
   // 担当者が指定された場合、同 household の active メンバーであることを検証。
   // （undefined は未指定で変更なし、null は担当解除なので検証対象外）
   if (
@@ -255,22 +167,25 @@ todoRoutes.patch("/todos/:id", requireAuth, async (c) => {
   }
 
   await updateTodo(c.env.DB, household.id, id, {
-    title: body.title?.trim(),
-    description: body.description,
-    status: body.status,
-    isChecklist: body.isChecklist,
-    isImportant: body.isImportant,
-    visibility: body.visibility,
-    dueDate: body.dueDate,
+    title: input.title?.trim(),
+    description: input.description,
+    status: input.status,
+    isChecklist: input.isChecklist,
+    isImportant: input.isImportant,
+    visibility: input.visibility,
+    dueDate: input.dueDate,
     assigneeId,
   });
-  if (body.tagIds !== undefined) {
-    await setTodoTags(c.env.DB, household.id, id, body.tagIds ?? []);
+  if (input.tagIds !== undefined) {
+    await setTodoTags(c.env.DB, household.id, id, input.tagIds ?? []);
   }
 
   // 期限が変わったらリマインダーをリセット（新しい期限で再通知できるように）。
   // body.dueDate が指定され、かつ実際に値が変化した場合のみ削除する。
-  if (body.dueDate !== undefined && (body.dueDate ?? null) !== (row.due_date ?? null)) {
+  if (
+    input.dueDate !== undefined &&
+    (input.dueDate ?? null) !== (row.due_date ?? null)
+  ) {
     await clearTodoReminders(c.env.DB, id);
   }
 

@@ -27,6 +27,14 @@ This repository is published as a **reference implementation**, not a ready-to-u
 
 The UI direction was first explored with Claude Design, then implemented in React/CSS. The generated Claude Design source artifacts are intentionally not included in this public repository. Only the resulting app code and design tokens are kept.
 
+## Screenshots
+
+Sample data only. No production data is included.
+
+![petabo home sample](docs/screenshots/home-sample.png)
+
+![petabo rich menu sample](docs/screenshots/richmenu-sample.png)
+
 ## Local Development
 
 Node.js 22 or later is required.

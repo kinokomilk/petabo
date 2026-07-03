@@ -1,4 +1,4 @@
-// リマインダー Cron ロジックのテスト。PHASE2_TEST_PLAN「Reminder」準拠。
+// リマインダー Cron ロジックのテスト。
 // push は mock（fetch を呼ばない）。now を注入して overdue/due_soon/future/done・
 // 静かな時間帯・宛先選定・重複防止・失敗処理を検証する。
 import { describe, expect, it, beforeEach } from "vitest";

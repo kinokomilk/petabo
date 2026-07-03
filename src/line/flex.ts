@@ -1,14 +1,14 @@
-// LINE Flex メッセージのビルダ（Phase 3 / Wave 1 タスク一覧）。
+// LINE Flex メッセージのビルダ（タスク一覧）。
 //
 // 設計の要点:
 //   - 外部由来テキスト（タイトル・担当名）は Flex JSON の構造値（text）に入れる。
-//     文字列手結合で JSON を作らない（line-integration / PHASE3_PRE_REVIEW 厳守）。
+//     文字列手結合で JSON を作らない。
 //   - 操作は postback。data に action と todoId を入れ、サーバ側で再認可する。
-//   - 担当は「テキスト＋イニシャル」で表現（色アバター画像は Wave 1 では使わない）。
+//   - 担当は「テキスト＋イニシャル」で表現する。
 //   - 期限は色分け: 期限切れ=赤系 / 24h 以内=オレンジ寄り / それ以外=ミュート。
 //   - private は鍵 + 「じぶん」表記（creator だけに出る前提＝呼び出し側でフィルタ済み）。
 //
-// petabo 配色（petabo-ui SKILL のトークン）:
+// petabo 配色:
 //   accent #FF7A4D / accent-deep #D9622F / ink #2B2622 / ink-2 #7A7164
 //   overdue #FF8A80 / lock(violet) #7A5FB0 / line #E9E2D6 / surface-2 #F2ECE3
 import type { TodoRow } from "../types";

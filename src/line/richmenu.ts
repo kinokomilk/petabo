@@ -1,9 +1,9 @@
-// リッチメニュー定義（areas/actions）。Phase 3 / Wave 2-a。
+// リッチメニュー定義（areas/actions）。
 //
 // 画像 web/public/richmenu.png（2500×1686, 2列×2行）と座標を一致させる:
 //   左上 = 一覧 / 右上 = きょう / 左下 = メモを貼る / 右下 = 連携設定
 //
-// action は postback か URI のみ。秘密値を URL/data に入れない（PHASE3_PRE_REVIEW 厳守）。
+// action は postback か URI のみ。秘密値を URL/data に入れない。
 //   一覧       → postback action=list（既定フィルタ。webhook の handlePostback が一覧 Flex を返す）
 //   きょう     → postback action=list&filter=today（today フィルタ）
 //   メモを貼る → postback action=addprompt（quickReply で「追加 」入力を促す最小実装）

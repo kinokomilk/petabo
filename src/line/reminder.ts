@@ -1,4 +1,4 @@
-// リマインダー（Cron）ロジック。SPEC §6 / PHASE2_LINE_DESIGN_REVIEW 準拠。
+// リマインダー（Cron）ロジック。
 // 純粋・時刻注入可能：runReminders(db, push, now) の形にし、Vitest で
 //   - now を注入して overdue/due_soon/future/done と静かな時間帯を制御
 //   - push を mock して multicast/単発の呼び分け・記録/非記録を assert

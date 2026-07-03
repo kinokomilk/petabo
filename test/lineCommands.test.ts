@@ -1,5 +1,5 @@
 // LINE チャット操作（message / postback）のテスト。
-// PHASE3_PRE_REVIEW acceptance 準拠:
+// LINE チャット操作の受け入れ条件:
 //   - 不正署名 webhook は副作用ゼロ（lineWebhook.test.ts で網羅済み・ここでも reply 不発を確認）
 //   - 一覧が requester の可視範囲だけ（他人の private が出ない）
 //   - postback 完了が正しい todoId だけに作用 / 見えない・他人 private の todoId は拒否

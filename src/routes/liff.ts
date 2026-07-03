@@ -1,9 +1,9 @@
-// LIFF（Phase 3 / Wave 2-b）。LINE 内で Web 本体を開くための入口。
+// LIFF。LINE 内で Web 本体を開くための入口。
 // - GET /api/liff/config: 公開設定 { liffId } を返す（秘密は返さない）。
 // - POST /api/auth/liff: LIFF が取得した id_token をサーバで検証し、
 //   ユーザー解決（Web OAuth と同方針）→ HttpOnly Cookie セッションを発行する。
 //
-// 設計（docs/PHASE3_PRE_REVIEW.md「LIFF」節 / line-integration SKILL）:
+// 設計:
 // - LIFF_ID は公開設定。channel secret / access token はフロント/LIFF に渡さない。
 // - id_token の検証はサーバ側で行う（client_id = LINE_LOGIN_CHANNEL_ID）。
 //   verify endpoint（既存 verifyIdToken）を再利用し、iss/aud/exp/sub を自側でも再検証。

@@ -1,5 +1,4 @@
 // LINE ログイン（OAuth / OIDC）テスト。fetch ラッパ（token/verify）は mock。
-// PHASE2_TEST_PLAN「LINE Login」準拠。
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import app from "../src/index";
 import { testEnv, seedHousehold } from "./helpers";

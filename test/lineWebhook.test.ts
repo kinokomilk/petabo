@@ -1,5 +1,4 @@
 // LINE Webhook テスト。固定 secret + raw body で実署名を生成して検証する。
-// PHASE2_TEST_PLAN「Webhook」準拠。
 import { describe, expect, it } from "vitest";
 import app from "../src/index";
 import { testEnv } from "./helpers";

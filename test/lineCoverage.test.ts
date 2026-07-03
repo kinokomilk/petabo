@@ -1,4 +1,4 @@
-// Phase 2 追加カバレッジ（QA）。PHASE2_TEST_PLAN の穴を埋める。
+// LINE 連携の追加カバレッジ。
 // プロダクトコードは変更せず、未カバーの分岐だけをテストする。
 //   - Login: session ユーザーが既に line_user_id を持つ場合の衝突（上書きせず新規）
 //   - Login: session が失効しているのに sub 未登録 → 新規作成

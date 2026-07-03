@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+
+# secrets (never commit)
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.local
+
+# wrangler / cloudflare
+.wrangler/
+.mf/
+wrangler.toml.bak
+
+# build output
+dist/
+web/dist/
+build/
+
+# logs / os
+*.log
+npm-debug.log*
+.DS_Store
+
+# editor
+.idea/
+.vscode/
+*.tsbuildinfo
+
+# local agent settings
+.claude/settings.local.json
+.claude/
+.codex/
+.agents/
+
+# test
+coverage/
+
+# e2e (playwright)
+test-results/
+playwright-report/
+e2e/.auth/
+e2e/artifacts/

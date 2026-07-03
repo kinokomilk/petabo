@@ -1,0 +1,31 @@
+.avatar {
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-family: var(--font-head);
+  flex: none;
+  line-height: 1;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+.avatar-stack > * + * {
+  margin-left: -8px;
+}
+.avatar-more {
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  color: var(--ink-3);
+  font-weight: 700;
+  font-size: 11px;
+  border: 2px solid var(--bg);
+  flex: none;
+}

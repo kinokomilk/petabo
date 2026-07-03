@@ -1,0 +1,208 @@
+.detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.detail-body {
+  flex: 1;
+  padding: 8px 18px calc(12px + env(safe-area-inset-bottom));
+  min-width: 0;
+  overflow-x: hidden;
+}
+.detail-titlecard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 0 18px;
+}
+.detail-title-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  width: 100%;
+  font-family: var(--font-head);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  padding: 8px 10px;
+  line-height: 1.3;
+  word-break: break-word;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+.detail-title-input:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-tint);
+  outline-offset: 1px;
+}
+
+.detail-block {
+  margin-bottom: 20px;
+  min-width: 0;
+}
+.detail-block:last-of-type {
+  margin-bottom: 0;
+}
+.block-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.block-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: 7px 0 0;
+}
+
+/* 状態 3分割 */
+.status-toggle {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 3px;
+}
+.status-seg {
+  flex: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 9px 0;
+  border-radius: 9px;
+  transition: all 0.15s;
+}
+.status-seg.active {
+  background: var(--surface);
+  color: var(--accent-deep);
+  box-shadow: 0 1px 3px rgba(50, 38, 25, 0.12);
+}
+
+/* 担当 / カテゴリ chip */
+.assignee-picker,
+.cat-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.assignee-chip,
+.cat-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 6px 12px 6px 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.cat-pick {
+  padding: 7px 13px;
+}
+.assignee-chip.active,
+.cat-pick.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+  font-weight: 700;
+}
+
+.seg-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.detail-date-field {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+.detail-date-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* コメント */
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.comment-item {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.comment-bubble {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 4px 14px 14px 14px;
+  padding: 9px 12px;
+  box-shadow: var(--shadow-soft);
+}
+.comment-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.comment-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.comment-time {
+  font-size: 11px;
+  color: var(--muted);
+}
+.comment-body {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.comment-compose {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.comment-compose .input {
+  flex: 1;
+  min-width: 0;
+}
+.comment-compose .btn {
+  flex: none;
+  white-space: nowrap;
+}
+
+.saving-hint {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  opacity: 0.9;
+}

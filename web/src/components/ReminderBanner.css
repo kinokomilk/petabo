@@ -1,0 +1,46 @@
+.reminder-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 16px 2px;
+}
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-size: 12.5px;
+}
+.reminder b {
+  font-weight: 700;
+}
+.reminder.overdue {
+  background: var(--overdue-bg);
+  color: var(--overdue-deep);
+}
+.reminder.soon {
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+}
+.rm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.overdue .rm-dot {
+  background: var(--overdue-deep);
+}
+.soon .rm-dot {
+  background: var(--accent);
+}
+.rm-text {
+  flex: 1;
+}
+.rm-link {
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.85;
+}

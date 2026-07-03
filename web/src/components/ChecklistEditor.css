@@ -1,0 +1,100 @@
+.checklist-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 13px;
+  box-shadow: var(--shadow-soft);
+}
+.cl-progress {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.cl-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.cl-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.25s;
+}
+.cl-count {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.cl-items {
+  display: flex;
+  flex-direction: column;
+}
+.cl-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.cl-text {
+  flex: 1;
+  font-size: 14px;
+  color: var(--ink);
+  position: relative;
+  word-break: break-word;
+}
+.cl-text.done {
+  color: var(--muted-2);
+}
+/* 取り消し線（左から scaleX） */
+.cl-strike {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  background: var(--muted-2);
+  transform-origin: left center;
+  animation: strikeIn 0.28s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-strike {
+    animation: none;
+  }
+}
+.cl-del {
+  border: none;
+  background: transparent;
+  color: var(--muted-2);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 6px;
+  flex: none;
+}
+
+.cl-empty {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 4px 0 12px;
+}
+
+.cl-add {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: stretch;
+}
+.cl-add .input {
+  flex: 1;
+}
+.cl-add .btn {
+  flex: none;
+  width: 44px;
+  font-size: 20px;
+}

@@ -1,0 +1,205 @@
+.home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 6px;
+  padding-top: max(14px, env(safe-area-inset-top));
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+.brand-logo {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 23px;
+  color: var(--accent);
+}
+.brand-house {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.home-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 18px 4px;
+  border-bottom: 1px solid var(--surface-4);
+}
+.home-tabs-seg {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tab-pill {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  color: var(--ink-3);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tab-pill.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+/* 完了タブ：控えめな done トーン。アクティブ時のみグリーンで「完了一覧」を示す。 */
+.tab-pill-done {
+  color: var(--muted);
+}
+.tab-pill-done.active {
+  background: var(--done);
+  color: #fff;
+}
+.only-mine {
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.only-mine.active {
+  border-color: transparent;
+  background: var(--lock-bg);
+  color: var(--lock);
+  font-weight: 700;
+}
+
+.home-tabs-filters {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 「重要だけ」フィルタ。only-mine と同じアウトライン pill、active はスター（金）トーン。 */
+.important-only {
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.important-only.active {
+  border-color: transparent;
+  background: var(--star-bg);
+  color: var(--star-deep);
+  font-weight: 700;
+}
+
+/* クイック追加の取り消し（Undo）トースト。下部ナビの上に浮かせる。 */
+.undo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(78px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100% - 32px);
+  padding: 9px 10px 9px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  box-shadow: var(--shadow-pop);
+  font-size: 13px;
+  z-index: 50;
+  animation: undo-in 0.18s ease;
+}
+.undo-toast-msg {
+  font-weight: 500;
+}
+.undo-toast-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent-tint);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 12px;
+  min-height: 44px; /* 時間制限つき救済操作のためタップ領域を確保 */
+  border-radius: 8px;
+}
+.undo-toast-btn:hover {
+  text-decoration: underline;
+}
+@keyframes undo-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .undo-toast {
+    animation: none;
+  }
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 20px 4px;
+}
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.section-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted-2);
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.home-list {
+  display: flex;
+  flex-direction: column;
+}
+.home-spacer {
+  flex: 1;
+  min-height: 24px;
+}
+.home-error {
+  margin: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--overdue-bg);
+  color: var(--overdue-deep);
+  font-size: 13px;
+}

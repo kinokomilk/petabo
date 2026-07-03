@@ -1,0 +1,62 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px 6px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 5;
+}
+.topbar-back {
+  border: none;
+  background: transparent;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--ink-2);
+  cursor: pointer;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.topbar-back:has(.topbar-back-label) {
+  gap: 2px;
+  width: auto;
+  padding: 0 5px 0 0;
+  border-radius: 6px;
+}
+.topbar-back-label {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.topbar-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  flex: 1;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-action {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ink-2);
+  padding: 6px 8px;
+  font-family: inherit;
+}
+.topbar-action.danger {
+  color: var(--overdue-deep);
+}

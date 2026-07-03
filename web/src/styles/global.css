@@ -1,0 +1,142 @@
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--shell);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: var(--shell);
+}
+
+/* アプリ本体は ~440px 中央寄せ（モバイルファースト） */
+.app-shell {
+  width: 100%;
+  max-width: var(--app-max);
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 50px rgba(60, 45, 25, 0.1);
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+a {
+  color: var(--accent-deep);
+}
+
+/* フォーカス可視（a11y） */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* タップ領域の最小確保 */
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-head);
+}
+
+/* スクロールバーは控えめに */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ---- 共通アニメーション ---- */
+@keyframes checkPop {
+  0% {
+    transform: scale(0.5);
+  }
+  55% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes donePulse {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(0.985);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes strikeIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ptb-press:active {
+  transform: scale(0.96);
+}
+.ptb-check:active {
+  transform: scale(0.82);
+}
+.ptb-add:active {
+  transform: scale(0.9);
+}
+
+/* prefers-reduced-motion でアニメ抑制（a11y） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .ptb-press:active,
+  .ptb-check:active,
+  .ptb-add:active {
+    transform: none;
+  }
+}

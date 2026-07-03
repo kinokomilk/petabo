@@ -1,0 +1,155 @@
+.task-entry {
+  position: relative;
+  border-bottom: 1px solid var(--surface-4);
+  transition: opacity 0.25s;
+}
+.task-row {
+  display: flex;
+  gap: 13px;
+  padding: 13px 18px;
+  align-items: flex-start;
+}
+.task-entry.is-done {
+  opacity: 0.55;
+}
+
+/* 追加時は控えめなフェードインのみ（テープ/回転落下は不使用）。 */
+.task-entry.just-added {
+  animation: taskFadeIn 0.3s ease-out;
+}
+@keyframes taskFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .task-entry.just-added {
+    animation: none;
+  }
+}
+
+.task-check-flash {
+  animation: checkPop 0.45s ease-out;
+}
+
+.task-main {
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.task-title-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+.task-title {
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+  word-break: break-word;
+}
+.is-done .task-title {
+  color: var(--muted-2);
+}
+
+/* 取り消し線（左から scaleX）。done のときだけ描画。 */
+.strike {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  background: var(--muted-2);
+  transform-origin: left center;
+  transform: scaleX(1);
+  animation: strikeIn 0.28s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .strike {
+    animation: none;
+  }
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 7px;
+}
+.meta-assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.meta-name {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.meta-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-chip-doing {
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+}
+
+.star-btn {
+  flex: none;
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  font-size: 19px;
+  line-height: 1;
+  transition: transform 0.12s;
+  align-self: flex-start;
+  margin-top: 1px;
+}
+
+.task-checklist {
+  margin: -2px 18px 13px 58px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.task-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+}
+.task-checklist-item + .task-checklist-item {
+  border-top: 1px solid var(--surface-4);
+}
+.task-checklist-text {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.task-checklist-text.done {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--muted-2);
+}

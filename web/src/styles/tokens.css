@@ -1,0 +1,73 @@
+/* petabo デザイントークン。色はすべてここで一元管理する。 */
+:root {
+  /* 主役オレンジ */
+  --accent: #ff7a4d;
+  --accent-deep: #d9622f;
+  --accent-tint: #ffe7dc;
+  --accent-tint2: #fbe0dc;
+
+  /* 背景・面 */
+  --bg: #fbf6ef;
+  --surface: #ffffff;
+  --surface-2: #f2ece3;
+  --surface-3: #efe6d9;
+  --surface-4: #f0e9de;
+  --shell: #e9e2d6; /* 端末枠の外側 */
+
+  /* インク・muted */
+  --ink: #2b2622;
+  --ink-2: #7a7164;
+  --ink-3: #8a7f70;
+  --muted: #a89e92;
+  --muted-2: #bab1a6;
+
+  /* 罫線 */
+  --line: #e9e2d6;
+  --line-2: #d8d0c5;
+
+  /* 状態 */
+  --done: #3aa675; /* 完了（グリーン） */
+  --star: #f4b740;
+  --star-deep: #e8a33d;
+  --star-bg: #fcefd6; /* 重要フィルタ等の淡い金背景 */
+  --overdue: #ff8a80;
+  --overdue-deep: #d23b30;
+  --overdue-bg: #fbe0dc;
+  --lock: #7a5fb0; /* 非公開＝バイオレット */
+  --lock-bg: #eee8f8;
+
+  /* 補助色 */
+  --violet: #9b7ede;
+  --violet-tint: #eee8f8;
+  --blue: #4c8df6;
+  --pink: #e86fa0;
+
+  /* メンバー色（登録順割当・参考） */
+  --m1: #ff7a4d;
+  --m2: #4c8df6;
+  --m3: #3aa675;
+  --m4: #9b7ede;
+  --m5: #e86fa0;
+
+  --line-green: #06c755;
+
+  /* due 状態 pill */
+  --due-today-bg: #ffe7dc;
+  --due-today-fg: #d9622f;
+  --due-soon-bg: #ebeff3;
+  --due-soon-fg: #5e6e7e;
+
+  /* フォントスタック（CDN 失敗時はシステム丸ゴシック/サンセリフ + Noto に落ちる） */
+  --font-head: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans",
+    "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
+  --font-body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", system-ui,
+    -apple-system, sans-serif;
+
+  /* レイアウト */
+  --app-max: 440px;
+  --radius-pill: 999px;
+  --radius-card: 20px;
+  --shadow-card: 0 3px 14px rgba(50, 38, 25, 0.06);
+  --shadow-soft: 0 2px 8px rgba(50, 38, 25, 0.04);
+  --shadow-pop: 0 6px 20px rgba(43, 38, 34, 0.22); /* 浮遊するダーク要素（トースト等）用の暖色影 */
+}

@@ -1,0 +1,50 @@
+.unjoined-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.join-code-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.join-code-row .input {
+  flex: 1;
+  min-width: 0;
+}
+.join-code-row .btn {
+  flex: none;
+  white-space: nowrap;
+}
+.join-hint {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 2px 0 6px;
+  text-align: center;
+}
+.create-space {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.create-space-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.unjoined-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: 4px 0;
+}
+.unjoined-or::before,
+.unjoined-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}

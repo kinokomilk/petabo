@@ -1,0 +1,47 @@
+.ptb-checkbox {
+  flex: none;
+  position: relative;
+  border-style: solid;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s;
+}
+/* タップ領域を最低 44px に拡張（見た目サイズは petabo デザイン準拠のまま）。 */
+.ptb-checkbox::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ptb-cb-hit, 44px);
+  height: var(--ptb-cb-hit, 44px);
+  transform: translate(-50%, -50%);
+}
+.ptb-checkbox.round {
+  border-width: 2.5px;
+}
+.ptb-checkbox.square {
+  border-width: 2px;
+}
+
+/* チェックの描画アニメ（dashoffset）。reduced-motion で global 側が抑制。 */
+.ptb-check-svg path {
+  stroke-dasharray: 26;
+  stroke-dashoffset: 0;
+  animation: checkDraw 0.32s ease-out;
+}
+@keyframes checkDraw {
+  from {
+    stroke-dashoffset: 26;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ptb-check-svg path {
+    animation: none;
+  }
+}

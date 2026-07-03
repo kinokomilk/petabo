@@ -1,0 +1,78 @@
+.newtodo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.newtodo-body {
+  flex: 1;
+  padding: 8px 18px 0;
+  min-width: 0;
+  overflow-x: hidden;
+}
+.type-toggle {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 3px;
+  margin: 8px 0 20px;
+}
+.type-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 10px 0;
+  border-radius: 9px;
+  transition: all 0.15s;
+}
+.type-btn.active {
+  background: var(--surface);
+  color: var(--accent-deep);
+  box-shadow: 0 1px 3px rgba(50, 38, 25, 0.12);
+}
+.checklist-items-input {
+  min-height: 112px;
+  line-height: 1.45;
+}
+.nt-date-field {
+  display: block;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+.nt-due-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  /* iOS Safari は input[type=date] に -webkit-appearance:none を当てると
+     中身（年/月/日）の幅・高さに潰れて細く見える。ネイティブ表示のまま
+     width:100% を効かせ、他の .input と高さを揃える。 */
+  min-height: 46px;
+  text-align: left;
+}
+/* 保存ボタンは画面下に固定（モバイルで常に見える）。 */
+.newtodo-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 -18px;
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    var(--surface) 14px,
+    var(--surface) 100%
+  );
+  border-top: 1px solid var(--line);
+}

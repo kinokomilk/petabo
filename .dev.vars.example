@@ -1,0 +1,24 @@
+# petabo ローカル開発用シークレットの雛形。
+# 実際の値を入れたファイルは `.dev.vars`（.gitignore 済み・非コミット）として作成する。
+# 本番は `wrangler secret put <NAME>` で Workers Secrets に設定する。
+
+# Phase 1（Web/PWA コア）ではアプリ動作に必須のシークレットは無い。
+# Cookie の Secure 属性は本番(HTTPS)で自動付与する。ローカル http では外す挙動。
+
+# --- Phase 2 以降（LINE 連携）で使用予定。未設定なら LINE 機能はスキップ/無効化される ---
+# 名称は docs/LINE_SETUP.md / docs/PHASE2_PRECHECK.md の正に統一。実値はコミットしない。
+
+# Messaging API（webhook 署名検証 / push）
+# LINE_CHANNEL_SECRET=
+# LINE_CHANNEL_ACCESS_TOKEN=
+
+# LINE Login（OAuth / OIDC: トークン交換・ID トークン検証）
+# LINE_LOGIN_CHANNEL_ID=
+# LINE_LOGIN_CHANNEL_SECRET=
+
+# コールバック / 絶対 URL 生成の基底（例: https://petabo.example.workers.dev）
+# APP_BASE_URL=
+
+# Phase 3（LIFF 初期化）
+# LIFF_ID は公開設定（フロントへ渡してよい）。secret ではないが、実値は LIFF アプリ作成後に設定。
+# LIFF_ID=

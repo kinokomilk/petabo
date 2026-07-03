@@ -1,0 +1,38 @@
+.cldetail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.cldetail-body {
+  flex: 1;
+  padding: 8px 18px 40px;
+}
+.cldetail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 18px;
+}
+.cldetail-title-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  width: 100%;
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  padding: 8px 10px;
+  line-height: 1.3;
+  word-break: break-word;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+.cldetail-title-input:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-tint);
+  outline-offset: 1px;
+}

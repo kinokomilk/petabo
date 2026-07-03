@@ -1,0 +1,24 @@
+name = "petabo"
+main = "src/index.ts"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
+
+# 静的アセット配信（フロント web/dist を同一 Worker で配信）。
+# web 未ビルドでも dev 起動できるよう、ディレクトリは後から生成される想定。
+# `assets` バインディングは Worker から env.ASSETS でも参照でき、SPA フォールバックは
+# not_found_handling = "single-page-application" で index.html を返す。
+[assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+# D1（SQLite 互換）。database_id は `wrangler d1 create petabo` 実行後に差し替える。
+[[d1_databases]]
+binding = "DB"
+database_name = "petabo"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+migrations_dir = "src/db/migrations"
+
+# --- Phase 2 用（リマインダー Cron）。30 分間隔で起動。送信数が増えれば 60 分へ。 ---
+[triggers]
+crons = ["*/30 * * * *"]

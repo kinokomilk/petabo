@@ -33,11 +33,14 @@ Claude Design が生成した元ファイルは、この公開リポジトリに
 
 すべてサンプルデータです。本番データは含めていません。
 
-![petabo ホーム チェックリスト](docs/screenshots/home-checklist-sample.png)
+<p>
+  <img src="docs/screenshots/home-checklist-sample.png" width="280" alt="petabo ホーム チェックリスト">
+  <img src="docs/screenshots/todo-detail-sample.png" width="280" alt="petabo TODO 詳細">
+</p>
 
-![petabo TODO 詳細](docs/screenshots/todo-detail-sample.png)
-
-![petabo リッチメニュー](docs/screenshots/richmenu-sample.png)
+<p>
+  <img src="docs/screenshots/richmenu-sample.png" width="520" alt="petabo リッチメニュー">
+</p>
 
 ## ローカル開発
 

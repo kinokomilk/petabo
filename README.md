@@ -33,9 +33,9 @@ Claude Design が生成した元ファイルは、この公開リポジトリに
 
 すべてサンプルデータです。本番データは含めていません。
 
-![petabo ホーム](docs/screenshots/home-sample.png)
-
 ![petabo ホーム チェックリスト](docs/screenshots/home-checklist-sample.png)
+
+![petabo TODO 詳細](docs/screenshots/todo-detail-sample.png)
 
 ![petabo リッチメニュー](docs/screenshots/richmenu-sample.png)
 

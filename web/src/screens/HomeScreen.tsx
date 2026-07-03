@@ -1,10 +1,9 @@
 // ホーム。ヘッダ / タブ / クイック追加 / セクション / タスク行。
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { ChecklistItemDTO, TodoDTO, UserDTO, TagDTO } from "../../../src/types";
 import { useAuth } from "../auth/AuthContext";
 import { endpoints } from "../api/endpoints";
 import { useAsync } from "../lib/useAsync";
-import { dueState } from "../lib/datetime";
 import { AvatarStack } from "../components/AvatarStack";
 import { TaskRow } from "../components/TaskRow";
 import { Spinner } from "../components/bits";
@@ -12,21 +11,12 @@ import { EmptyState } from "../components/EmptyState";
 import { QuickAdd } from "../components/QuickAdd";
 import { BottomNav } from "../components/BottomNav";
 import { ReminderBanner } from "../components/ReminderBanner";
+import { buildHomeLists, getHomeVisibility, type HomeTab } from "./homeModel";
 import "./HomeScreen.css";
-
-type Tab = "today" | "upcoming" | "all" | "done";
-
-// 重要(isImportant)を各セクション最上部にピン留め。サーバ並び（期限/作成順）は維持。
-function pinImportant(list: TodoDTO[]): TodoDTO[] {
-  // stable sort: isImportant 降順のみ。同位はサーバ順を保つ。
-  return [...list].sort(
-    (a, b) => Number(b.isImportant) - Number(a.isImportant)
-  );
-}
 
 export function HomeScreen() {
   const { me } = useAuth();
-  const [tab, setTab] = useState<Tab>("all");
+  const [tab, setTab] = useState<HomeTab>("all");
   const [onlyMine, setOnlyMine] = useState(false);
   const [importantOnly, setImportantOnly] = useState(false);
   const [recentlyAdded, setRecentlyAdded] = useState<string | null>(null);
@@ -46,39 +36,11 @@ export function HomeScreen() {
   const meUser = me?.user ?? null;
 
   // フィルタ＆並び（バックエンドが due 近い順で返す前提だが念のため安定化）。
-  const { todayList, upcomingList, allList } = useMemo(() => {
-    const list = todos.data ?? [];
-    const scoped = onlyMine
-      ? list.filter(
-          (t) => t.visibility === "private" && t.creator?.id === meUser?.id
-        )
-      : list;
-    const base = importantOnly ? scoped.filter((t) => t.isImportant) : scoped;
-    const active = base.filter((t) => t.status !== "done");
-    const today: TodoDTO[] = [];
-    const upcoming: TodoDTO[] = [];
-    for (const t of active) {
-      const s = dueState(t.dueDate);
-      if (s === "today" || s === "overdue") today.push(t);
-      else upcoming.push(t);
-    }
-    return {
-      todayList: pinImportant(today),
-      upcomingList: pinImportant(upcoming),
-      allList: base,
-    };
-  }, [todos.data, onlyMine, importantOnly, meUser?.id]);
-
-  const doneList = useMemo(() => {
-    const list = doneTodos.data ?? [];
-    const scoped = onlyMine
-      ? list.filter(
-          (t) => t.visibility === "private" && t.creator?.id === meUser?.id
-        )
-      : list;
-    const base = importantOnly ? scoped.filter((t) => t.isImportant) : scoped;
-    return pinImportant(base);
-  }, [doneTodos.data, onlyMine, importantOnly, meUser?.id]);
+  const { todayList, upcomingList, allList, doneList } = buildHomeLists(
+    todos.data ?? [],
+    doneTodos.data ?? [],
+    { onlyMine, importantOnly, viewerId: meUser?.id ?? null },
+  );
 
   function refreshTodos() {
     todos.reload();
@@ -202,15 +164,8 @@ export function HomeScreen() {
       />
     ));
 
-  // タブごとの表示対象。
-  const showDone = tab === "done";
-  const showToday = !showDone && (tab === "today" || tab === "all");
-  const showUpcoming = !showDone && (tab === "upcoming" || tab === "all");
-
-  const visibleCount =
-    (showToday ? todayList.length : 0) +
-    (showUpcoming ? upcomingList.length : 0) +
-    (showDone ? doneList.length : 0);
+  const { showDone, showToday, showUpcoming, visibleCount } =
+    getHomeVisibility(tab, { todayList, upcomingList, allList, doneList });
 
   const allActiveEmpty =
     (todos.data ?? []).filter((t) => t.status !== "done").length === 0;

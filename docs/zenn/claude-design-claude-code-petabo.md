@@ -12,6 +12,10 @@ published: false
 
 この記事では、完成したアプリそのものよりも、そこに至るまでの進め方、技術選定の理由、つまずいた点、公開前に整理したことを中心に書きます。
 
+公開したリポジトリはこちらです。
+
+@[card](https://github.com/kinokomilk/petabo)
+
 :::message
 公開リポジトリには、本番 URL、実データ、実名、Claude Design の元素材は含めていません。
 スクリーンショットもサンプルデータで撮り直しています。
@@ -32,6 +36,18 @@ published: false
 - PWA としてスマホから使える Web 画面
 
 家族で使うものなので、細かい管理機能よりも「スマホでさっと追加できる」「通知に気づける」「買い物リストのような子タスクを扱える」ことを優先しました。
+
+ホーム画面は、クイック追加とチェックリストの進捗が見える構成にしています。
+
+![petabo のホーム画面。サンプルデータで、チェックリスト付きタスクが表示されている](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/home-checklist-sample.png)
+
+タスク詳細では、状態、公開範囲、担当、期限、カテゴリ、チェックリスト、コメントをまとめて編集できます。
+
+![petabo の TODO 詳細画面。チェックリストとコメントが表示されている](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/todo-detail-sample.png)
+
+LINE からは、一覧、今日のタスク、メモ追加、連携設定へ入れるようにしています。
+
+![petabo の LINE リッチメニュー。一覧、きょう、メモを貼る、連携設定の4領域](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/richmenu-sample.png)
 
 ## いきなり Claude Code で書き始めなかった
 

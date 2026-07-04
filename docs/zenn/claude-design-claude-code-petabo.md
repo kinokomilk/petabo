@@ -39,15 +39,15 @@ published: false
 
 ホーム画面は、クイック追加とチェックリストの進捗が見える構成にしています。
 
-![petabo のホーム画面。サンプルデータで、チェックリスト付きタスクが表示されている](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/home-checklist-sample.png)
+<img src="https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/home-checklist-sample.png" width="280" alt="petabo のホーム画面。サンプルデータで、チェックリスト付きタスクが表示されている">
 
 タスク詳細では、状態、公開範囲、担当、期限、カテゴリ、チェックリスト、コメントをまとめて編集できます。
 
-![petabo の TODO 詳細画面。チェックリストとコメントが表示されている](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/todo-detail-sample.png)
+<img src="https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/todo-detail-sample.png" width="280" alt="petabo の TODO 詳細画面。チェックリストとコメントが表示されている">
 
 LINE からは、一覧、今日のタスク、メモ追加、連携設定へ入れるようにしています。
 
-![petabo の LINE リッチメニュー。一覧、きょう、メモを貼る、連携設定の4領域](https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/richmenu-sample.png)
+<img src="https://raw.githubusercontent.com/kinokomilk/petabo/main/docs/screenshots/richmenu-sample.png" width="420" alt="petabo の LINE リッチメニュー。一覧、きょう、メモを貼る、連携設定の4領域">
 
 ## いきなり Claude Code で書き始めなかった
 
